@@ -1,6 +1,6 @@
 import { gotoTarget } from "roles/goto";
 import { clearTask } from "roles/clear-task";
-import { isHoldingResources, nonEnergyResources } from "resources/is-holding";
+import { isHoldingResources, nonEnergyResources } from "resources/utils";
 
 export const useResources = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!);

@@ -3,7 +3,7 @@ import { assignTask } from "roles/assign-task";
 import { performTask } from "roles/perform-task";
 import { conditionallySpawnCreep } from "spawn/spawn";
 import { structureAction } from "structures/structure-action";
-import { processFlags } from "utils/clearFlags";
+import { processFlags } from "clearFlags";
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code

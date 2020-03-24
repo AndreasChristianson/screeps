@@ -10,5 +10,5 @@ export const spawnHybrid = (spawn: StructureSpawn) =>
     {
       role: HYBRID
     },
-    [MOVE, WORK, MOVE, CARRY, MOVE, CARRY]
+    [MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY]
   );

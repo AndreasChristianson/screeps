@@ -2,7 +2,7 @@ export const nonEnergyResources = RESOURCES_ALL.filter(
   resource => resource !== RESOURCE_ENERGY
 );
 const getUsedCapacity = (
-  store: StoreDefinition,
+  store: Store<ResourceConstant, true|false>,
   resourceConstants: ResourceConstant[]
 ) =>
   resourceConstants.reduce(
@@ -10,6 +10,9 @@ const getUsedCapacity = (
     0
   );
 export const isHoldingResources = (
-  store: StoreDefinition,
+  store: Store<ResourceConstant, true|false>,
   resourceConstants: ResourceConstant[]
 ) => getUsedCapacity(store, resourceConstants) > 0;
+
+export const isEmpty = (store: Store<ResourceConstant, true|false>) =>
+  getUsedCapacity(store, RESOURCES_ALL) === 0;

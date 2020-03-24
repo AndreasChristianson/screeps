@@ -1,13 +1,10 @@
 import { gotoTarget } from "roles/goto";
 import { clearTask } from "roles/clear-task";
+import { isEmpty } from "resources/utils";
 
 export const getEnergy = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!);
   if (!target) {
-    clearTask(creep);
-    return;
-  }
-  if (creep.store.getFreeCapacity() === 0) {
     clearTask(creep);
     return;
   }
@@ -20,12 +17,13 @@ export const getEnergy = (creep: Creep) => {
     return;
   }
   for (const resource of RESOURCES_ALL) {
+    const bank = target as Ruin | Tombstone | StructureContainer | StructureStorage
     const withdrawResult = creep.withdraw(
-      target as Ruin | Tombstone | StructureContainer | StructureStorage,
+      bank,
       resource
     );
 
-    if (withdrawResult === OK) {
+    if (withdrawResult === OK && isEmpty(bank.store)) {
       clearTask(creep);
       return;
     }
@@ -46,5 +44,9 @@ export const getEnergy = (creep: Creep) => {
   }
   if (gotoTarget(creep, target) === ERR_NO_PATH) {
     clearTask(creep);
+  }
+  if (creep.store.getFreeCapacity() === 0) {
+    clearTask(creep);
+    return;
   }
 };

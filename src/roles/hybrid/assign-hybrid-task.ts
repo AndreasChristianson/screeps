@@ -3,7 +3,7 @@ import { USE_ENERGY, GET_ENERGY, USE_RESOURCE } from "type-constants";
 import { hasEnergyToProvide, needsEnergy } from "./has-energy";
 import { getWeightedFlowerpots } from "../flowerpots";
 import { getWeightedWells } from "../dowsing";
-import { isHoldingResources, nonEnergyResources } from "resources/is-holding";
+import { isHoldingResources, nonEnergyResources } from "resources/utils";
 import { biggestFirst } from "../../utils/sort";
 
 const useResourceTask = (creep: Creep): Task | undefined => {

@@ -1,5 +1,5 @@
 import { clearTask } from "roles/clear-task";
-import { getFlags } from "./flags";
+import { getFlags } from "./utils/flags";
 
 export const processFlags = () => {
   getFlags(COLOR_GREEN).forEach(flag => {
