@@ -1,8 +1,6 @@
-import { buildBody } from "./build-body";
 import { createCreep } from "./create-creep";
 import { EXPLORER } from "type-constants";
 import { getFlags } from "utils/flags";
-import { findCreepsByRole } from "utils/find";
 
 export const needExplorer = () => getFlags(COLOR_BLUE).length;
 

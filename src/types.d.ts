@@ -38,6 +38,8 @@ interface CreepMemory {
 
 interface RoomMemory {
   lastWait: number;
+  labelCount: number;
+  notificationCount: number;
 }
 
 interface FlagMemory {

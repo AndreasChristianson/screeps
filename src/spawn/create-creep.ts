@@ -1,16 +1,14 @@
 import { generateName } from "utils/random";
+import { drawNonUrgentNotification } from "visuals/draw-notification";
 
-const buildBody = (
+const repeat = (
   partsToAdd: BodyPartConstant[],
-  baseBody: BodyPartConstant[] = []
-) => {
-  const body = baseBody;
-  const go = () => body.length <= MAX_CREEP_SIZE + 1;
-  if (partsToAdd.length) {
-    for (let i = 0; go(); i++) {
+  times: number
+): BodyPartConstant[] => {
+  const body: BodyPartConstant[] = [];
+    for (let i = 0; i< times; i++) {
       body.push(partsToAdd[i % partsToAdd.length]);
     }
-  }
 
   return body;
 };
@@ -19,15 +17,20 @@ export const createCreep = (
   spawn: StructureSpawn,
   memory: CreepMemory,
   bodyTemplate: BodyPartConstant[],
-  baseBody: BodyPartConstant[] = []
+  frontBaseBody: BodyPartConstant[] = [],
+  backBaseBody: BodyPartConstant[] = []
 ) => {
-  const body = buildBody(bodyTemplate, baseBody);
-  let spawnResult;
+  const innerBody = repeat(bodyTemplate, MAX_CREEP_SIZE - frontBaseBody.length - backBaseBody.length + 1);
+  let spawnResult, body;
+  const name = generateName(memory.role);
   do {
-    body.pop();
-    spawnResult = spawn.spawnCreep(body, generateName(memory.role), {
-      memory
-    });
+    innerBody.pop();
+    body = [
+      ...frontBaseBody,
+      ...innerBody,
+      ...backBaseBody
+    ]
+    spawnResult = spawn.spawnCreep(body, name, {memory});
   } while (spawnResult !== OK);
-  spawn.room.visual.text(`${memory.role}, [${body.join(", ")}]`, spawn.pos);
+  drawNonUrgentNotification(spawn.room, `${memory.role}, [${body.length}]`);
 };

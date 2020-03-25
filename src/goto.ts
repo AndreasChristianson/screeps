@@ -5,7 +5,7 @@ export const gotoTarget = (creep: Creep, obj: RoomObject) => {
 export const gotoPos = (
   creep: Creep,
   pos: RoomPosition
-): CreepMoveReturnCode | ERR_NO_PATH | ERR_INVALID_TARGET | ERR_NOT_FOUND => {
+) => {
   if (creep.room.name !== pos.roomName) {
     return gotoRoom(creep, pos.roomName);
   }
@@ -28,7 +28,7 @@ export const gotoRoom = (
 ): CreepMoveReturnCode | ERR_NO_PATH | ERR_INVALID_TARGET | ERR_NOT_FOUND => {
   const exitDirection = creep.room.findExitTo(roomName);
   if (ERR_NO_PATH === exitDirection) {
-    console.log("failed multiroom travel:");
+    console.log("failed multi-room travel:");
     console.log(exitDirection);
     return exitDirection as ERR_NO_PATH;
   }
@@ -39,5 +39,5 @@ export const gotoRoom = (
       | FIND_EXIT_RIGHT
       | FIND_EXIT_TOP
   );
-  return gotoPos(creep, exitTarget[0]);
+  return gotoPos(creep, exitTarget[0]); //todo, go to the closest one, not the first
 };

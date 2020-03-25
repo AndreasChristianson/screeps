@@ -1,4 +1,4 @@
-import { gotoTarget } from "roles/goto";
+import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
 import { isHoldingResources, nonEnergyResources } from "resources/utils";
 
