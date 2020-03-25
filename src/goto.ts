@@ -12,13 +12,6 @@ export const gotoPos = (
   const result = creep.moveTo(pos, {
     visualizePathStyle: { stroke: "#aaaaaa" }
   });
-  if (!_.includes([ERR_TIRED, OK, ERR_BUSY], result)) {
-    creep.room.visual.text(
-      `failed to move: ${result}`,
-      creep.pos.x,
-      creep.pos.y
-    );
-  }
   return result;
 };
 

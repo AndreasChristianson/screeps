@@ -1,16 +1,16 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
-import { isIn } from "utils/return-codes";
+import { needsRepair } from "utils/repairs";
 
-export const dismantle = (creep: Creep) => {
+export const repair = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as Structure;
-  if (!target) {
+  if (!target || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
     clearTask(creep);
     return;
   }
-  if (creep.store.getFreeCapacity() === 0) {
+  creep.repair(target);
+  if (!needsRepair(target)) {
     clearTask(creep);
   }
-  creep.dismantle(target);
   gotoTarget(creep, target);
 };

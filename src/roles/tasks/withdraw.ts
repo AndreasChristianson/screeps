@@ -7,6 +7,7 @@ export const withdraw = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as Ruin | Tombstone | StructureStorage | StructureContainer;
   if (!target) {
     clearTask(creep);
+    return;
   }
   if (creep.store.getFreeCapacity() === 0) {
     clearTask(creep);
@@ -23,7 +24,5 @@ export const withdraw = (creep: Creep) => {
       clearTask(creep);
     }
   }
-  if (isIn(gotoTarget(creep, target), [ERR_NO_PATH])) {
-    clearTask(creep);
-  }
+  gotoTarget(creep, target);
 };

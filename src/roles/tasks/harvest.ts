@@ -6,6 +6,7 @@ export const harvest = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as Source | Mineral<MineralConstant> | Deposit;
   if (!target) {
     clearTask(creep);
+    return;
   }
   if (creep.store.getFreeCapacity() === 0) {
     clearTask(creep);
@@ -14,7 +15,5 @@ export const harvest = (creep: Creep) => {
   if (isIn(creep.harvest(target), [ERR_NOT_ENOUGH_RESOURCES])) {
     clearTask(creep);
   }
-  if (isIn(gotoTarget(creep, target), [ERR_NO_PATH])) {
-    clearTask(creep);
-  }
+  gotoTarget(creep, target);
 };

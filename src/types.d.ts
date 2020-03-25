@@ -6,7 +6,6 @@ type EXPLORER = "EXPLORER";
 
 type Role = HYBRID | EXPLORER | FIGHTER;
 
-type USE_ENERGY = "USE_ENERGY";
 type USE_RESOURCE = "USE_RESOURCE";
 type GOTO_ROOM = "GOTO_ROOM";
 type CLAIM_CONTROLLER = "CLAIM_CONTROLLER";
@@ -15,16 +14,23 @@ type PICKUP = "PICKUP";
 type WITHDRAW = "WITHDRAW";
 type HARVEST = "HARVEST";
 type DISMANTLE = "DISMANTLE";
+type BUILD = "BUILD";
+type UPGRADE_CONTROLLER = "UPGRADE_CONTROLLER";
+type REPAIR = "REPAIR";
+type TRANSFER = "TRANSFER";
 
 type TaskType =
   | WAIT
   | USE_RESOURCE
   | CLAIM_CONTROLLER
   | GOTO_ROOM
-  | USE_ENERGY
   | PICKUP
   | WITHDRAW
   | HARVEST
+  | BUILD
+  | UPGRADE_CONTROLLER
+  | TRANSFER
+  | REPAIR
   | DISMANTLE;
 
 type TaskMetadata = "repair";
@@ -55,6 +61,22 @@ interface FlagMemory {
 interface Memory {
   uuid: number;
   log: any;
+}
+
+interface TargetBuilder{
+  id: Id<RoomObject>;
+  baseWeight: number;
+  energy: number;
+  type: TaskType;
+  pos: RoomPosition;
+}
+
+interface Target {
+  id: Id<RoomObject>;
+  weight: number;
+  energy: number;
+  type: TaskType;
+  adjacencyCount: number;
 }
 
 // `global` extension samples

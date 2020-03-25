@@ -14,7 +14,5 @@ export const pickup = (creep: Creep) => {
   if (isIn(creep.pickup(target as Resource),[OK, ERR_FULL])) {
     clearTask(creep);
   }
-  if (isIn(gotoTarget(creep, target),[ERR_NO_PATH])) {
-    clearTask(creep);
-  }
+  gotoTarget(creep, target);
 };

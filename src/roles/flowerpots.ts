@@ -1,31 +1,19 @@
-import { USE_ENERGY } from "type-constants";
 import { needsRepair } from "utils/repairs";
 import { underAttack } from "utils/modes";
+import { REPAIR, UPGRADE_CONTROLLER, TRANSFER, BUILD } from "type-constants";
+import { adjacentLocationCount } from "utils/find";
 
-interface WeightedFlowerpot {
-  id: Id<RoomObject>;
-  weight: number;
-  freeCapacity: number;
-  pos: RoomPosition;
-  meta?: TaskMetadata;
-}
+const getServicers = (room: Room, id: Id<RoomObject>) =>
+  room.find(FIND_MY_CREEPS)
+    .filter(creep => creep.memory.task)
+    .filter(creep => [REPAIR, UPGRADE_CONTROLLER, TRANSFER, BUILD].includes(creep.memory.task!.type))
+    .filter(creep => id === creep.memory.task!.target)
 
-export const getWeightedFlowerpots = (creep: Creep): WeightedFlowerpot[] => {
+export const getWeightedFlowerpots = (creep: Creep): Target[] => {
   const { room } = creep;
-  const getWaterers = (id: Id<RoomObject>) =>
-    room.find(FIND_MY_CREEPS, {
-      filter: {
-        memory: {
-          task: {
-            type: USE_ENERGY,
-            flowerPot: id
-          }
-        }
-      }
-    });
 
-  const flowerpots: WeightedFlowerpot[] = getFlowerpots(creep)
-    .filter(flowerpot => flowerpot.freeCapacity)
+  const flowerpots: Target[] = getFlowerpots(creep)
+    .filter(flowerpot => flowerpot.energy)
     .filter(
       flowerpot =>
         room
@@ -38,15 +26,16 @@ export const getWeightedFlowerpots = (creep: Creep): WeightedFlowerpot[] => {
     .map(flowerpot => ({
       ...flowerpot,
       weight:
-        flowerpot.weight /
-        ((getWaterers(flowerpot.id).length * 2 + 1) *
-          creep.pos.getRangeTo(flowerpot.pos))
+        flowerpot.baseWeight /
+        ((getServicers(room, flowerpot.id).length * 2 + 1) *
+          creep.pos.getRangeTo(flowerpot.pos)),
+      adjacencyCount: adjacentLocationCount(creep.room, flowerpot.pos)
     }));
 
   return flowerpots;
 };
 
-export const getFlowerpots = (creep: Creep): WeightedFlowerpot[] => {
+export const getFlowerpots = (creep: Creep): TargetBuilder[] => {
   const { room } = creep;
 
   const REPAIR_RELATIVE_WEIGHT = 16;
@@ -56,26 +45,28 @@ export const getFlowerpots = (creep: Creep): WeightedFlowerpot[] => {
   const CONTAINER_RELATIVE_WEIGHT = 2;
   const CONTROLLER_RELATIVE_WEIGHT = 2;
 
-  const spawnFlowerpots = room
+  const spawnFlowerpots: TargetBuilder[] = room
     .find<StructureSpawn | StructureExtension>(FIND_MY_STRUCTURES)
     .filter(structure =>
       [STRUCTURE_EXTENSION, STRUCTURE_SPAWN].includes(structure.structureType)
     )
-    .map(spawnLike => ({
+    .map<TargetBuilder>(spawnLike => ({
       id: spawnLike.id,
-      weight: SPAWN_RELATIVE_WEIGHT,
-      freeCapacity: spawnLike.energyCapacity - spawnLike.energy,
-      pos: spawnLike.pos
+      baseWeight: SPAWN_RELATIVE_WEIGHT,
+      energy: spawnLike.energyCapacity - spawnLike.energy,
+      pos: spawnLike.pos,
+      type: TRANSFER
     }));
 
   const towerFlowerpots = room
     .find<StructureTower>(FIND_MY_STRUCTURES)
     .filter(structure => [STRUCTURE_TOWER].includes(structure.structureType))
-    .map(tower => ({
+    .map<TargetBuilder>(tower => ({
       id: tower.id,
-      weight: TOWER_RELATIVE_WEIGHT,
-      freeCapacity: tower.energyCapacity - tower.energy,
-      pos: tower.pos
+      baseWeight: TOWER_RELATIVE_WEIGHT,
+      energy: tower.energyCapacity - tower.energy,
+      pos: tower.pos,
+      type: TRANSFER
     }));
 
   const storageFlowerpots = room
@@ -83,45 +74,48 @@ export const getFlowerpots = (creep: Creep): WeightedFlowerpot[] => {
     .filter(structure =>
       [STRUCTURE_CONTAINER].includes(structure.structureType)
     )
-    .map(container => ({
+    .map<TargetBuilder>(container => ({
       id: container.id,
-      weight: CONTAINER_RELATIVE_WEIGHT,
-      freeCapacity: container.store.getFreeCapacity(RESOURCE_ENERGY),
-      pos: container.pos
+      baseWeight: CONTAINER_RELATIVE_WEIGHT,
+      energy: container.store.getFreeCapacity(RESOURCE_ENERGY),
+      pos: container.pos,
+      type: TRANSFER
     }));
 
   const constructionFlowerpots = room
     .find(FIND_CONSTRUCTION_SITES)
-    .map(site => ({
+    .map<TargetBuilder>(site => ({
       id: site.id,
-      weight: BUILD_RELATIVE_WEIGHT,
-      freeCapacity: site.progressTotal - site.progress,
-      pos: site.pos
+      baseWeight: BUILD_RELATIVE_WEIGHT,
+      energy: site.progressTotal - site.progress,
+      pos: site.pos,
+      type: BUILD
     }));
 
-  const repairFlowerpots: WeightedFlowerpot[] = room
+  const repairFlowerpots = room
     .find(FIND_STRUCTURES)
     .filter(needsRepair)
-    .map<WeightedFlowerpot>(structure => ({
+    .map<TargetBuilder>(structure => ({
       id: structure.id,
-      weight: REPAIR_RELATIVE_WEIGHT,
-      freeCapacity: structure.hitsMax - structure.hits,
+      baseWeight: REPAIR_RELATIVE_WEIGHT,
+      energy: structure.hitsMax - structure.hits,
       pos: structure.pos,
-      meta: "repair"
+      type: REPAIR
     }));
 
-  const controllerFlowerpot = room.controller
+  const controllerFlowerpot: TargetBuilder[] = room.controller
     ? [
         {
           id: room.controller.id,
-          weight: CONTROLLER_RELATIVE_WEIGHT,
-          freeCapacity: room.controller.level === 8 ? 0 : 1,
-          pos: room.controller.pos
+          baseWeight: CONTROLLER_RELATIVE_WEIGHT,
+          energy: room.controller.level === 8 ? 0 : 1,
+          pos: room.controller.pos,
+          type: UPGRADE_CONTROLLER
         }
       ]
     : [];
 
-  const flowerpots: WeightedFlowerpot[] = [
+  const flowerpots: TargetBuilder[] = [
     ...storageFlowerpots,
     ...constructionFlowerpots,
     ...towerFlowerpots,
