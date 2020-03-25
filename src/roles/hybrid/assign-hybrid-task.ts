@@ -1,5 +1,5 @@
 import { getWaitTask } from "roles/waiting";
-import { USE_ENERGY, GET_ENERGY, USE_RESOURCE } from "type-constants";
+import { USE_ENERGY, USE_RESOURCE } from "type-constants";
 import { hasEnergyToProvide, needsEnergy } from "./has-energy";
 import { getWeightedFlowerpots } from "../flowerpots";
 import { getWeightedWells } from "../dowsing";
@@ -41,8 +41,7 @@ const getEnergy = (creep: Creep): Task | undefined => {
   if (needsEnergy(creep) && wells.length) {
     return {
       target: wells[0].id,
-      type: GET_ENERGY,
-      meta: wells[0].meta
+      type: wells[0].type
     };
   }
   return undefined;

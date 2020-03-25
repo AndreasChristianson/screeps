@@ -1,6 +1,6 @@
 import { registerCallback } from "utils/registries";
 
-const labelColumnLeft = 1;
+const labelColumnLeft = 0;
 const labelColumnWidth = 6;
 
 registerCallback(() => {

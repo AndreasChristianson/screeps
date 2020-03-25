@@ -6,22 +6,28 @@ type EXPLORER = "EXPLORER";
 
 type Role = HYBRID | EXPLORER | FIGHTER;
 
-type GET_ENERGY = "GET_ENERGY";
 type USE_ENERGY = "USE_ENERGY";
 type USE_RESOURCE = "USE_RESOURCE";
 type GOTO_ROOM = "GOTO_ROOM";
 type CLAIM_CONTROLLER = "CLAIM_CONTROLLER";
 type WAIT = "WAIT";
+type PICKUP = "PICKUP";
+type WITHDRAW = "WITHDRAW";
+type HARVEST = "HARVEST";
+type DISMANTLE = "DISMANTLE";
 
 type TaskType =
   | WAIT
-  | GET_ENERGY
   | USE_RESOURCE
   | CLAIM_CONTROLLER
   | GOTO_ROOM
-  | USE_ENERGY;
+  | USE_ENERGY
+  | PICKUP
+  | WITHDRAW
+  | HARVEST
+  | DISMANTLE;
 
-type TaskMetadata = "repair" | "dismantle" | "container";
+type TaskMetadata = "repair";
 
 interface Task {
   target?: Id<RoomObject>;
