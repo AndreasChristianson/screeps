@@ -13,11 +13,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
   console.log(Game.time);
   Object.values(Game.structures).forEach(structureAction);
   const creeps = Object.values(Game.creeps).filter(creep => !creep.spawning);
+  //todo clear tasks as a separate step
   creeps.forEach(assignTask);
   Object.values(Game.spawns).forEach(conditionallySpawnCreep);
   creeps.forEach(performTask);
 
-  // Object.values(Game.rooms).forEach(assignRoomTasks)
+  // Object.values(Game.rooms).forEach(assignRoomTasks) //todo, sort tasks, not creeps
 
 
 

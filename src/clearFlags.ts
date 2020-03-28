@@ -17,6 +17,7 @@ export const processFlags = () => {
     flag.remove();
   });
 
+  // todo
   // getFlags(COLOR_CYAN) // remote harvest
 
 

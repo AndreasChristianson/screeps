@@ -8,6 +8,6 @@ export const drawRoomDisplay = (spawn: StructureSpawn) => {
   drawPercentLabel(spawn.room, 'spawn energy', totalEnergy, totalCapacity);
   drawLabel(spawn.room, 'spawn energy', totalEnergy.toString());
 
-
+  //todo draw source refresh times
   drawLabel(spawn.room, 'last wait', `${Game.time - spawn.room.memory.lastWait} turns`);
 }
