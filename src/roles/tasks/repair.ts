@@ -1,6 +1,7 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
 import { needsRepair } from "utils/repairs";
+import { isIn } from "utils/return-codes";
 
 export const repair = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as Structure;
@@ -8,9 +9,11 @@ export const repair = (creep: Creep) => {
     clearTask(creep);
     return;
   }
-  creep.repair(target);
   if (!needsRepair(target)) {
     clearTask(creep);
   }
-  gotoTarget(creep, target);
+  const repairResult = creep.repair(target);
+  if(!isIn(repairResult,[OK])){
+    gotoTarget(creep, target);
+  }
 };

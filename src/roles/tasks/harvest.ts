@@ -12,8 +12,13 @@ export const harvest = (creep: Creep) => {
     clearTask(creep);
     return;
   }
-  if (isIn(creep.harvest(target), [ERR_NOT_ENOUGH_RESOURCES])) {
+  
+  const harvestResult = creep.harvest(target);
+  if (isIn(harvestResult, [ERR_NOT_ENOUGH_RESOURCES])) {
     clearTask(creep);
   }
-  gotoTarget(creep, target);
+
+  if (!isIn(harvestResult, [OK])) {
+    gotoTarget(creep, target);
+  }
 };

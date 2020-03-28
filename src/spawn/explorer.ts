@@ -11,5 +11,5 @@ export const spawnExplorer = (spawn: StructureSpawn) =>
       role: EXPLORER
     },
     [MOVE, WORK, MOVE, CARRY, MOVE, CARRY],
-    [MOVE, CLAIM]
+    getFlags(COLOR_BLUE)[0].room ? [] : [MOVE, CLAIM]
   );

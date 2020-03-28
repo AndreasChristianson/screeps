@@ -14,19 +14,27 @@ const getServicers = (room: Room, id: Id<RoomObject>) =>
 export const getWeightedWells = (creep: Creep): Target[] => {
   const wells: Target[] = getWells(creep, creep.room)
     .filter(well => well.energy)
-    .filter(well => well.baseWeight)
+    .filter(well => well.weight)
     .filter(
       well =>
-        adjacentLocationCount(creep.room, well.pos) >
-        getServicers(creep.room, well.id).length
+        well.parallelism >
+        getServicers(creep.room, well.target.id).length
     )
-    .map<Target>(well => ({
-      ...well,
+    .map<Target>(({
+      target,
+      weight,
+      parallelism,
+      energy,
+      type
+    }) => ({
+      type,
+      energy,
+      parallelism,
       weight:
-        well.baseWeight /
-        ((getServicers(creep.room, well.id).length + 1) *
-          creep.pos.getRangeTo(well.pos)),
-      adjacencyCount: adjacentLocationCount(creep.room, well.pos)
+        weight /
+        ((getServicers(creep.room, target.id).length + 1) *
+          creep.pos.getRangeTo(target.pos)),
+      id: target.id
     }));
 
   return wells;
@@ -43,37 +51,37 @@ export const getWells = (creep: Creep, room: Room): TargetBuilder[] => {
 
   const tombstoneWells: TargetBuilder[] = room.find(FIND_TOMBSTONES)
     .map<TargetBuilder>(w => ({
-      id: w.id,
-      baseWeight: TOMBSTONE_RELATIVE_WEIGHT,
+      target: w,
+      weight: TOMBSTONE_RELATIVE_WEIGHT,
       energy: w.store.getUsedCapacity(),
-      pos: w.pos,
+      parallelism: 10,
       type: WITHDRAW,
     }));
 
   const droppedWells: TargetBuilder[] = room.find(FIND_DROPPED_RESOURCES)
     .map<TargetBuilder>(w => ({
-      id: w.id,
-      baseWeight: FLOOR_RELATIVE_WEIGHT,
+      target: w,
+      weight: FLOOR_RELATIVE_WEIGHT,
       energy: w.amount,
-      pos: w.pos,
+      parallelism: 10,
       type: PICKUP,
     }));
 
   const ruinWells: TargetBuilder[] = room.find(FIND_RUINS)
     .map<TargetBuilder>(w => ({
-      id: w.id,
-      baseWeight: RUIN_RELATIVE_WEIGHT,
+      target: w,
+      weight: RUIN_RELATIVE_WEIGHT,
       energy: w.store.getUsedCapacity(),
-      pos: w.pos,
+      parallelism: 10,
       type: WITHDRAW,
     }));
 
   const sourceWells: TargetBuilder[] = room.find(FIND_SOURCES)
     .map<TargetBuilder>(w => ({
-      id: w.id,
-      baseWeight: SOURCE_RELATIVE_WEIGHT,
+      target: w,
+      weight: SOURCE_RELATIVE_WEIGHT,
       energy: w.energy,
-      pos: w.pos,
+      parallelism: adjacentLocationCount(creep.room, w.pos),
       type: HARVEST,
     }));
 
@@ -86,10 +94,10 @@ export const getWells = (creep: Creep, room: Room): TargetBuilder[] => {
       .map(flag => room.lookForAt(LOOK_STRUCTURES, flag.pos)[0])
       .filter(structure => structure)
       .map<TargetBuilder>(structure => ({
-        id: structure.id,
-        baseWeight: DISMANTLE_RELATIVE_WEIGHT,
+        target: structure,
+        weight: DISMANTLE_RELATIVE_WEIGHT,
         energy: structure.hits / DISMANTLE_POWER,
-        pos: structure.pos,
+        parallelism: adjacentLocationCount(creep.room, structure.pos),
         type: DISMANTLE
       }));
   }
@@ -100,10 +108,10 @@ export const getWells = (creep: Creep, room: Room): TargetBuilder[] => {
       [STRUCTURE_CONTAINER].includes(structure.structureType)
     )
     .map<TargetBuilder>(w => ({
-      id: w.id,
-      baseWeight: CONTAINER_RELATIVE_WEIGHT,
+      target: w,
+      weight: CONTAINER_RELATIVE_WEIGHT,
       energy: w.store.getUsedCapacity(RESOURCE_ENERGY),
-      pos: w.pos,
+      parallelism: 10,
       type: WITHDRAW
     }));
 
@@ -111,10 +119,10 @@ export const getWells = (creep: Creep, room: Room): TargetBuilder[] => {
     .find<StructureStorage>(FIND_MY_STRUCTURES)
     .filter(structure => [STRUCTURE_STORAGE].includes(structure.structureType))
     .map<TargetBuilder>(w => ({
-      id: w.id,
-      baseWeight: STORAGE_RELATIVE_WEIGHT,
+      target: w,
+      weight: STORAGE_RELATIVE_WEIGHT,
       energy: w.store.getUsedCapacity(RESOURCE_ENERGY),
-      pos: w.pos,
+      parallelism: 10,
       type: WITHDRAW
     }));
 

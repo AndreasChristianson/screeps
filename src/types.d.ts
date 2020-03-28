@@ -33,13 +33,15 @@ type TaskType =
   | REPAIR
   | DISMANTLE;
 
-type TaskMetadata = "repair";
-
 interface Task {
   target?: Id<RoomObject>;
-  meta?: TaskMetadata;
   type: TaskType;
   roomName?: string;
+  wayPoint?:{
+    y: number;
+    x: number;
+    roomName: string;
+  }
 }
 
 // memory extension samples
@@ -64,11 +66,13 @@ interface Memory {
 }
 
 interface TargetBuilder{
-  id: Id<RoomObject>;
-  baseWeight: number;
+  target: RoomObject & {
+    id: Id<RoomObject>;
+  };
+  weight: number;
   energy: number;
   type: TaskType;
-  pos: RoomPosition;
+  parallelism: number;
 }
 
 interface Target {
@@ -76,7 +80,7 @@ interface Target {
   weight: number;
   energy: number;
   type: TaskType;
-  adjacencyCount: number;
+  parallelism: number;
 }
 
 // `global` extension samples

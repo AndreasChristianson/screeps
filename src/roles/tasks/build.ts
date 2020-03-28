@@ -1,5 +1,6 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
+import { isIn } from "utils/return-codes";
 
 export const build = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as ConstructionSite;
@@ -7,6 +8,8 @@ export const build = (creep: Creep) => {
     clearTask(creep);
     return;
   }
-  creep.build(target);
-  gotoTarget(creep, target);
+  const buildReturn = creep.build(target);
+  if(!isIn(buildReturn,[OK])){
+    gotoTarget(creep, target);
+  }
 };

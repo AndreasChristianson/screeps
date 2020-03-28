@@ -2,7 +2,7 @@ import { createCreep } from "./create-creep";
 import { HYBRID } from "type-constants";
 
 export const needHybrid = (spawn: StructureSpawn) => {
-  return !spawn.room.memory.lastWait || spawn.room.memory.lastWait < Game.time - 75;
+  return !spawn.room.memory.lastWait || spawn.room.memory.lastWait < Game.time - 100;
 };
 
 export const spawnHybrid = (spawn: StructureSpawn) =>
@@ -11,6 +11,5 @@ export const spawnHybrid = (spawn: StructureSpawn) =>
     {
       role: HYBRID
     },
-    [MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, WORK],
-    [MOVE, WORK]
+    [MOVE, WORK, MOVE, CARRY, MOVE, CARRY]
   );

@@ -1,5 +1,6 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
+import { isIn } from "utils/return-codes";
 
 export const transfer = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as
@@ -16,7 +17,7 @@ export const transfer = (creep: Creep) => {
     target,
     RESOURCE_ENERGY
   );
-  if (transferResult === ERR_FULL) {
+  if (isIn(transferResult, [ERR_FULL, OK])) {
     clearTask(creep);
   }
   if (creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
