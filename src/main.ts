@@ -24,7 +24,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   processFlags();
 
-  Object.values(Game.spawns).forEach(drawRoomDisplay);
+  Object.values(Game.rooms).forEach(drawRoomDisplay);
   cleanUp();
 
   // Automatically delete memory of missing creeps

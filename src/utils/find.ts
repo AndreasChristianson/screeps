@@ -1,12 +1,7 @@
 import { drawAtPosition } from "visuals/draw-at-position";
 
-export const findCreepsByRole = (role: Role) =>
-  Object.values(Game.creeps).filter(creep => creep.memory.role === role);
-
-export const findCreepsByTask = (task: TaskType) =>
-  Object.values(Game.creeps).filter(
-    creep => creep.memory.task && creep.memory.task.type === task
-  );
+export const findStructuresInRoom = (room: Room, ...types:StructureConstant[]) =>
+  room.find(FIND_STRUCTURES).filter(structure => types.some(type => type === structure.structureType));
 
 export const adjacentLocationCount = (room: Room, pos: RoomPosition, maxDistance: number = 1) =>
   navigableAdjacentLocations(room, pos, maxDistance).length;
@@ -40,7 +35,7 @@ export const navigableAdjacentLocations = (
     .map(({x: xdelta, y: ydelta}) => room!.getPositionAt(x + xdelta, y + ydelta))
     .filter(notNull)
     .filter(isEnterable);
-    drawAtPosition(pos, adjacentLocations.length.toString(), {color: 'gray'})
+    // drawAtPosition(pos, adjacentLocations.length.toString(), {color: 'gray'})
     return adjacentLocations;
 };
 
