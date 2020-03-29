@@ -1,5 +1,6 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
+import { isIn } from "utils/return-codes";
 
 export const upgradeController = (creep: Creep) => {
   const target = Game.getObjectById(creep.memory.task!.target!) as StructureController;
@@ -7,6 +8,8 @@ export const upgradeController = (creep: Creep) => {
     clearTask(creep);
     return;
   }
-  creep.upgradeController(target);
-  gotoTarget(creep, target);
+  const upgradeControllerResult = creep.upgradeController(target);
+  if(!isIn(upgradeControllerResult,[OK])){
+    gotoTarget(creep, target);
+  }
 };

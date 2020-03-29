@@ -1,5 +1,6 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
+import { isIn } from "utils/return-codes";
 
 export const claimController = (creep: Creep) => {
   const controller = Game.getObjectById(
@@ -14,10 +15,15 @@ export const claimController = (creep: Creep) => {
     clearTask(creep);
     return;
   }
+
   gotoTarget(creep, controller);
   const claimResult = creep.claimController(controller);
-  if (claimResult === OK) {
+  if (isIn(claimResult, [OK])) {
     clearTask(creep);
     return;
   }
+  const reserveResult = creep.reserveController(controller);
+  // if (isIn(reserveResult, [OK])) {
+  //   clearTask(creep);
+  // }
 };
