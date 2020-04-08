@@ -25,9 +25,7 @@ const claimTask = (creep: Creep): Task | undefined => {
   if (
     controller &&
     (controller.owner === undefined ||
-      controller.owner.username !== creep.owner.username) &&
-    (controller.reservation === undefined ||
-      controller.reservation.username !== creep.owner.username)
+      controller.owner.username !== creep.owner.username)
   ) {
     return {
       target: controller.id,

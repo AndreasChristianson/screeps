@@ -1,6 +1,12 @@
 export const biggestFirst = <T extends Record<K, number>, K extends keyof T>(
   key: K
-) => (left: T, right: T) => right[key] - left[key];
+) => biggestFirstByAccessor((item:T) => item[key])
 export const smallestFirst = <T extends Record<K, number>, K extends keyof T>(
   key: K
-) => (left: T, right: T) => left[key] - right[key];
+) => smallestFirstByAccessor((item:T) => item[key]);
+
+export const biggestFirstByAccessor = <T>(accessor:(t:T) => number) => (left: T, right: T) =>
+  accessor(right) - accessor(left);
+
+export const smallestFirstByAccessor = <T>(accessor:(t:T) => number) => (left: T, right: T) =>
+   accessor(left) - accessor(right);

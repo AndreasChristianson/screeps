@@ -83,6 +83,17 @@ interface Target {
   parallelism: number;
 }
 
+interface TaskBuilder{
+  weight: number;
+  creepPredicate: (creep:Creep) => boolean;
+  position: RoomPosition;
+  task: Task;
+  available?: number;
+  required?: number;
+  parallelism: number;
+  creepRange: number;
+}
+
 // `global` extension samples
 declare namespace NodeJS {
   interface Global {

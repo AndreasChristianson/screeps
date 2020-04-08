@@ -1,4 +1,9 @@
-import { drawAtPosition } from "visuals/draw-at-position";
+export const getAllMyCreeps = () => Object.values(Game.creeps);
+export const findAssignedCreeps = (task: Partial<Task>) => _.filter(getAllMyCreeps(),{
+  filter:{
+    memory: task
+  }
+});
 
 export const findStructuresInRoom = (room: Room, ...types:StructureConstant[]) =>
   room.find(FIND_STRUCTURES).filter(structure => types.some(type => type === structure.structureType));

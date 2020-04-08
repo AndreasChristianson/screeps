@@ -7,24 +7,24 @@ const repeat = (
   budget: number
 ): BodyPartConstant[] => {
   const body: BodyPartConstant[] = [];
-    for (let i = 0; cost(body) < budget; i++) {
-      body.push(partsToAdd[i % partsToAdd.length]);
-    }
-body.pop();
+  for (let i = 0; cost(body) < budget; i++) {
+    body.push(partsToAdd[i % partsToAdd.length]);
+  }
+  body.pop();
   return body;
 };
 
 const stripExtraMoves = (body: BodyPartConstant[]): BodyPartConstant[] => {
   let result = body;
-  while(result.filter(part => part === MOVE).length / result.length > 0.5){
+  while (result.filter(part => part === MOVE).length / result.length > 0.5) {
     const index = result.lastIndexOf(MOVE);
-    result.splice(index,1);
+    result.splice(index, 1);
     console.log('in while')
   }
   return result;
 }
 
-const cost = (body: BodyPartConstant[]):number => body.reduce((sum, part) => sum + BODYPART_COST[part], 0);
+const cost = (body: BodyPartConstant[]): number => body.reduce((sum, part) => sum + BODYPART_COST[part], 0);
 
 export const createCreep = (
   spawn: StructureSpawn,
@@ -36,15 +36,15 @@ export const createCreep = (
   const budget = getTotalAvailableEnergy(spawn);
   const frontCost = cost(frontBaseBody);
   const backCost = cost(backBaseBody);
-  
+
   const innerBody = repeat(bodyTemplate, Math.max(budget - frontCost - backCost, 0));
   const name = generateName(memory.role);
-    innerBody.pop();
-    const body = stripExtraMoves([
-      ...frontBaseBody,
-      ...innerBody,
-      ...backBaseBody
-    ]);
-    const spawnResult = spawn.createCreep(body, name, memory);
+  innerBody.pop();
+  const body = stripExtraMoves([
+    ...frontBaseBody,
+    ...innerBody,
+    ...backBaseBody
+  ]);
+  const spawnResult = spawn.createCreep(body, name, memory);
   drawNonUrgentNotification(spawn.room, `${memory.role}, [${body.length}]`);
 };

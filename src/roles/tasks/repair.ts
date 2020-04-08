@@ -1,6 +1,6 @@
 import { gotoTarget } from "goto";
 import { clearTask } from "roles/clear-task";
-import { needsRepair } from "utils/repairs";
+import { repairCost } from "utils/repairs";
 import { isIn } from "utils/return-codes";
 
 export const repair = (creep: Creep) => {
@@ -9,7 +9,7 @@ export const repair = (creep: Creep) => {
     clearTask(creep);
     return;
   }
-  if (!needsRepair(target)) {
+  if (!repairCost(target)) {
     clearTask(creep);
   }
   const repairResult = creep.repair(target);
